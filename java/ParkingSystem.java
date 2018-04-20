@@ -1,28 +1,20 @@
-package try4;
+package try5;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import try4.LevelController;
-import try4.VehicleController;
-import try4.Level;
+import try5.LevelController;
+import try5.Vehicle.VehicleTypeAllowed;
+import try5.Level;
 
 public class ParkingSystem {
-	ArrayList<Level> listOfCopyLevel = new ArrayList<Level>();
-
-	public ArrayList<Level> getlistOfCopyLevel() {
-		LevelController levelController = new LevelController();
-		listOfCopyLevel.addAll(levelController.getlistOfLevel());
-
-		return listOfCopyLevel;
-	}
 
 	public static void main(String args[]) {
-
-		VehicleController vehicleController = new VehicleController();
-		ParkingSystem parkingSystem = new ParkingSystem();
-		HashMap<String, String> parkingIdAndVehicle = new HashMap<String, String>();
+		LevelController levelController = new LevelController();
+		ArrayList<Vehicle> listOfVehicle = new ArrayList<Vehicle>();
+		HashMap<String, Vehicle> parkingIdAndVehicle = new HashMap<String, Vehicle>();
+		Vehicle vehicleCreation;
 
 		Scanner scan = new Scanner(System.in);
 		String userAction = "";
@@ -34,52 +26,51 @@ public class ParkingSystem {
 			if (userAction.equals("park")) {
 				System.out.println("Enter the type of vehicle to park?");
 				String vehicleType = scan.nextLine();
-				Vehicle UserVehicleType = null;
+				vehicleType = vehicleType.toUpperCase();
+				System.out.println("Enter the registration Id of vehicle to park?");
+				String uniqueId = scan.nextLine();
+				System.out.println("Enter the owner Name of vehicle to park?");
+				String ownerName = scan.nextLine();
 
-				switch (vehicleType) {
-				case "bus":
-					UserVehicleType = vehicleController.bus;
-					break;
-				case "van":
-					UserVehicleType = vehicleController.van;
-					break;
-				case "bike":
-					UserVehicleType = vehicleController.bike;
-					break;
-				case "car":
-					UserVehicleType = vehicleController.car;
-					break;
-				}
-				if ((vehicleController.getlistOfVehicle().contains(UserVehicleType))) {
-					for (Level availableLevel : parkingSystem.getlistOfCopyLevel()) {
-						if ((availableLevel.vehicleTypeAndCount.containsKey(UserVehicleType.VehicleName))
-								&& (availableLevel.vehicleTypeAndCount.get(UserVehicleType.VehicleName) > 0)) {
-							parkingIdAndVehicle.putAll(availableLevel.parkVehicle(UserVehicleType));
-							availableLevel.vehicleTypeAndCount.put(UserVehicleType.VehicleName.toString(),
-									availableLevel.vehicleTypeAndCount.get(UserVehicleType.VehicleName.toString()) - 1);
+				VehicleTypeAllowed userVehicleType = Vehicle.VehicleTypeAllowed.valueOf(vehicleType);
+				vehicleCreation = new Vehicle(userVehicleType, uniqueId, ownerName);
+				listOfVehicle.add(vehicleCreation);
+
+				if ((Vehicle.VehicleTypeAllowed.valueOf(vehicleType)) != null) {
+					for (Level availableLevel : levelController.getlistOfLevel()) {
+						int count = 0;
+						for (Vehicle iterable_element : availableLevel.parkingIdAndVehicle.values()) {
+							if (iterable_element.vehicleType.equals(vehicleCreation.vehicleType)) {
+								count++;
+							}
+						}
+						if ((availableLevel.vehicleTypeAndCount
+								.containsKey(Vehicle.VehicleTypeAllowed.valueOf(vehicleType))
+								&& (count < availableLevel.vehicleTypeAndCount.get(vehicleCreation.vehicleType)))) {
+							parkingIdAndVehicle.putAll(availableLevel.parkVehicle(vehicleCreation));
+							System.out.println("Your vehicle is succesfully parked...ID is--> " + availableLevel.levelId
+									+ availableLevel.parkingId);
 							break;
+						} else {
+							System.out.println("Sorry No more space available in the level");
 						}
 					}
-				} else {
-					System.out.println("Sorry!This vehicle type is not allowed in this parking level");
 				}
-				//System.out.println("Sorry No more Space available");
 			} else if (userAction.equals("unpark")) {
 				System.out.println("Enter the Parking Id to unpark your Vehicle?");
 				String userParkingId = scan.next();
-				for (Level availableLevel : parkingSystem.getlistOfCopyLevel()) {
+				for (Level availableLevel : levelController.getlistOfLevel()) {
 					if (availableLevel.parkingIdAndVehicle.containsKey(userParkingId)) {
-						String userVehicleParked = availableLevel.unParkVehicle(userParkingId);
-						if (userVehicleParked != null) {
+						Vehicle vehicleInId = availableLevel.unParkVehicle(userParkingId);
+						if (vehicleInId != null) {
 							parkingIdAndVehicle.remove(userParkingId);
-							System.out.println("Your Vehicle " + userVehicleParked + " is unparked now..");
-							System.out.println(parkingIdAndVehicle);
+							System.out.println("Your Vehicle -- " + vehicleInId.vehicleType + " --is unparked now..");
 							break;
 						}
 					}
-
 				}
-				//System.out.println("Given userId doesnot Exist..Enter a proper Id");
+			} else {
+				System.out.println("Please....Enter a proper value action to follow");
 			}
 		}
 	}
