@@ -1,7 +1,8 @@
-package try5;
+package park;
 
 import java.util.HashMap;
-import try5.Vehicle.VehicleTypeAllowed;
+
+import park.Vehicle.VehicleTypeAllowed;
 
 public class Level {
 
@@ -17,13 +18,14 @@ public class Level {
 	String parkingId = "";
 	HashMap<String, Vehicle> parkingIdAndVehicle = new HashMap<String, Vehicle>();
 
-	public HashMap<String, Vehicle> parkVehicle(Vehicle vehicle) {
+	public  HashMap<String, Vehicle> parkVehicle(Vehicle vehicle) {
 		if (vehicleTypeAndCount.get(vehicle.vehicleType) > 0) {
 			parkingId = Integer.toString(parkingNumber++);
 			parkingIdAndVehicle.put(levelId + parkingId, vehicle);
+			return parkingIdAndVehicle;
 		}
 		
-		return parkingIdAndVehicle;
+		return null;
 	}
 
 	public Vehicle unParkVehicle(String userParkingId) {

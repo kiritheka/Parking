@@ -1,10 +1,10 @@
-package try5;
+package park;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import try5.Level;
-import try5.Vehicle.VehicleTypeAllowed;
+import park.Level;
+import park.Vehicle.VehicleTypeAllowed;
 
 public class LevelController {
 
@@ -12,7 +12,7 @@ public class LevelController {
 			put(Vehicle.VehicleTypeAllowed.BIKE, 2);
 			put(Vehicle.VehicleTypeAllowed.CAR, 1);
 		}};
-	Level level1 = new Level("A", vehicleTypeAndCount1);
+	public Level level1 = new Level("A", vehicleTypeAndCount1);
 
 	HashMap<VehicleTypeAllowed, Integer> vehicleTypeAndCount2 = new HashMap<VehicleTypeAllowed, Integer>() {{
 			put(Vehicle.VehicleTypeAllowed.BIKE, 2);
@@ -35,5 +35,32 @@ public class LevelController {
 		listOfLevel.add(level3);
 
 		return listOfLevel;
+	}
+
+	public Level getLevelForParking(Vehicle vehicleCreation) {
+
+		for (Level availableLevel : getlistOfLevel()) {
+			int count = 0;
+			for (Vehicle iterable_element : availableLevel.parkingIdAndVehicle.values()) {
+				if (iterable_element.vehicleType.equals(vehicleCreation.vehicleType)) {
+					count++;
+				}
+			}
+			if ((availableLevel.vehicleTypeAndCount.containsKey(vehicleCreation.vehicleType)
+					&& (count < availableLevel.vehicleTypeAndCount.get(vehicleCreation.vehicleType)))) {
+				
+				return availableLevel;
+			}
+		}
+		return null;
+	}
+	
+	public Level getLevelForUnParking(String userParkingId) {
+		for (Level availableLevel : getlistOfLevel()) {
+			if (availableLevel.parkingIdAndVehicle.containsKey(userParkingId)) {
+				return availableLevel;
+			}
+		}
+		return null;
 	}
 }

@@ -1,8 +1,8 @@
-package try5;
+package park;
 
 public class Vehicle {
 	
-	enum VehicleTypeAllowed {
+	 public enum VehicleTypeAllowed {
 		BIKE,CAR, BUS, VAN
 	}
 
@@ -10,7 +10,7 @@ public class Vehicle {
 	String ownerName; 
 	VehicleTypeAllowed vehicleType;
 	
-	Vehicle(VehicleTypeAllowed vehicleType,String uniqueId,String ownerName){
+	 public Vehicle(VehicleTypeAllowed vehicleType,String uniqueId,String ownerName){
 		this.vehicleType = vehicleType;
 		this.uniqueId = uniqueId;
 		this.ownerName = ownerName;
